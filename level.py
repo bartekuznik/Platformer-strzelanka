@@ -1,5 +1,6 @@
 import pygame
 from block import *
+from player import *
 
 level_date = [["w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w"],
          ["w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w"],
@@ -22,6 +23,7 @@ class LevelBase():
 
     def setup_level(self, level_date):
         self.blocks = pygame.sprite.Group()
+        self.player_group = pygame.sprite.GroupSingle()
         for row_index, row in enumerate(level_date):
             for cell_index, cell in enumerate(row):
                 x = cell_index * block_size
@@ -29,7 +31,13 @@ class LevelBase():
                 if cell == "g":
                     block = Block( block_size, (x,y))
                     self.blocks.add(block)
+                if cell == "d":
+                    self.player = Player((x,y))
+                    self.player_group.add(self.player)
+                    
         
     def update(self):
         self.blocks.draw(self.screen)
+        self.player_group.draw(self.screen)
+        self.player.update()
 
