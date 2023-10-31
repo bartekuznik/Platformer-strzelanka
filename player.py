@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
 
         if keys[pygame.K_SPACE]:
             self.jump()
-            print(self.player_move[1])
+            #print(self.player_move[1])
 
 
     def moving(self):
@@ -52,7 +52,7 @@ class Player(pygame.sprite.Sprite):
         if self.moving_left == True:
             self.player_move[0] -= 7
 
-        print(self.player_move)
+        #print(self.player_move)
 
     """def test_fuction(self):
         if self.player_move[1] > 600 - self.image.get_height(): # 600 - wyskość okna
