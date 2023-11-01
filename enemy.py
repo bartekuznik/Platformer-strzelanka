@@ -10,12 +10,21 @@ class BaseEnemy(pygame.sprite.Sprite):
     def movement(self):
         pass
 
-    def update(self):
-        self.movement()
+    def update(self, enemies):
+        for enemy in enemies:
+            enemy.movement()
 
 class HorizntalEnemy(BaseEnemy):
     def __init__(self, position):
         super().__init__(position)
+        self.movement_range = 120
+        self.x_movement_value = 5
 
     def movement(self):
-        pass
+        if self.movement_range != 0:
+            self.rect.x += self.x_movement_value
+            self.movement_range -= 5
+
+        else:
+            self.movement_range = 120
+            self.x_movement_value *= -1
