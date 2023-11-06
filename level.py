@@ -8,7 +8,7 @@ from level_chunks import *
 block_size = 60
 
 class LevelBase():
-    def __init__(self, screen, level_date):
+    def __init__(self, screen, level_date_tabel):
         self.screen = screen
         self.level_number = 0
         self.level_date = level_date_tabel[0]
@@ -36,30 +36,74 @@ class LevelBase():
                     self.hor_enemy = HorizntalEnemy((x,y))
                     self.enemy_group.add(self.hor_enemy)
                     
-  
+    def scroll(self): 
+
+        """" działanie kamery:
+        1) W przypadku  player.rect.left powyżej 300 i player.rect.right poniżej 900
+           za scrollowanie i ruch odpowiada ta funkcja -> obiekt player stoi w miejsu,
+           rusza się cały ekran
+        2) W przypadku player.rect.left poniżej 300 lub player.rect.right powyżej 900
+           za scrollowanie i ruch odpowiada funkcja moving klasy Player -> obiekt player 
+           się porusza, reszta obiektów stoi w miejsu"""
+        
+        if self.player.moving_right == True:
+            for block in self.blocks:
+                if self.player.rect.left > 300 and self.player.rect.right < 900: #chodzi o screen width
+                    block.rect.x -= 7
+            for enemy in self.enemy_group:
+                if self.player.rect.left > 300 and self.player.rect.right < 900: 
+                    enemy.rect.x -= 7
+            
+            if self.player.rect.left > 300 and self.player.rect.right < 900: 
+                self.end_level.rect.x -= 7
+
+        elif self.player.moving_left == True:
+            for block in self.blocks:
+                if self.player.rect.left > 300 and self.player.rect.right < 900: 
+                    block.rect.x += 7
+            for enemy in self.enemy_group:
+                if self.player.rect.left > 300 and self.player.rect.right < 900: 
+                    enemy.rect.x += 7
+                   
+            if self.player.rect.left > 300 and self.player.rect.right < 900: 
+                self.end_level.rect.x += 7
+        
+
     def block_collide(self, blocks):
         block_collision = []
         for block in blocks:
             if self.player.rect.colliderect(block):
                 block_collision.append(block)
         return block_collision
-    
+
     def end_collide(self, end):
         if self.player.rect.colliderect(end):
             self.level_number += 1
+            self.blocks.empty()
+            self.enemy_group.empty()
+            self.player_group.empty()
+            self.end_group.empty()
+            #start_next_level()
             self.level_date = level_date_tabel[self.level_number]
             self.setup_level(self.level_date)
-    
+
+        #def start_next_level():
+         #   pass   
+
+
+ 
     def horizontal_collisions(self):
         self.player.rect.x += self.player.player_move[0]
         coll_block = self.block_collide(self.blocks)
         for block in coll_block:
-            if self.player.player_move[0] > 0 and self.player.moving_right == True:
+            #if self.player.player_move[0] > 0 and self.player.moving_right == True:
+            if self.player.moving_right == True:
                 self.player.rect.right = block.rect.left
-                print("PRAWO")
-            if self.player.player_move[0] < 0 and self.player.moving_left == True:
+                #print("PRAWO")
+            #if self.player.player_move[0] < 0 and self.player.moving_left == True:
+            if self.player.moving_left == True:
                 self.player.rect.left = block.rect.right
-                print("LEWO")
+                #print("LEWO")
     
     def vertical_collisions(self):
         self.player.add_gravity()
@@ -68,6 +112,7 @@ class LevelBase():
         for block in coll_block:
             if self.player.player_move[1] > 0:
                 self.player.rect.bottom = block.rect.top
+                self.player.onGround = True
                 #self.player.player_move[1] = 0
             if self.player.player_move[1] < 0:
                 self.player.rect.top = block.rect.bottom
@@ -91,3 +136,4 @@ class LevelBase():
 
         self.player.update()
         self.hor_enemy.update(self.enemy_group)
+        self.scroll()

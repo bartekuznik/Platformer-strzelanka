@@ -10,8 +10,9 @@ class Player(pygame.sprite.Sprite):
         self.jump_value = -15
         self.moving_right = False
         self.moving_left = False
+        self.onGround = True
         self.y_momentum = 0
-        self.player_move = [position[0], position[1]]
+        self.player_move = [0, 0]
 
     def add_gravity(self):
         """ if self.y_momentum < 1:
@@ -40,17 +41,20 @@ class Player(pygame.sprite.Sprite):
             self.moving_right = False
             self.moving_left = False
 
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] and self.onGround == True:
             self.jump()
+            self.onGround = False
             #print(self.player_move[1])
 
 
     def moving(self):
         self.player_move = [0, 0]
-        if self.moving_right == True:
-            self.player_move[0] += 7
-        if self.moving_left == True:
-            self.player_move[0] -= 7
+        
+        if self.rect.left <= 300 or self.rect.right >= 900:
+            if self.moving_right == True:
+                self.player_move[0] += 7
+            if self.moving_left == True:
+                self.player_move[0] -= 7
 
         #print(self.player_move)
 
