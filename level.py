@@ -1,4 +1,5 @@
 import pygame
+from time import sleep
 from block import *
 from player import *
 from level_end import *
@@ -13,6 +14,7 @@ class LevelBase():
         self.level_number = 0
         self.level_date = level_date_tabel[0]
         self.setup_level(self.level_date)
+        self.isActive = False
 
     def setup_level(self, level_date):
         self.blocks = pygame.sprite.Group()
@@ -77,19 +79,36 @@ class LevelBase():
         return block_collision
 
     def end_collide(self, end):
+
+        def level_screen():
+            self.screen.fill('black')
+            text_font = pygame.font.Font('font/font.ttf', 50)
+
+            top_text = text_font.render('Congratulations!!!',False,'blue')
+            top_text_rect = top_text.get_rect(center = (600, 200))
+
+            bottom_text = text_font.render('Wait 5 second to next level',False,'blue')
+            bottom_text_rect = bottom_text.get_rect(center = (600, 400))
+
+            self.screen.blit(top_text, top_text_rect)
+            self.screen.blit(bottom_text, bottom_text_rect)
+
         if self.player.rect.colliderect(end):
             self.level_number += 1
             self.blocks.empty()
             self.enemy_group.empty()
             self.player_group.empty()
             self.end_group.empty()
-            #start_next_level()
+            level_screen()
+            self.isActive = True
+            
+        
+    def load_new_level(self):
+        if self.isActive == True:
+            sleep(5)
             self.level_date = level_date_tabel[self.level_number]
             self.setup_level(self.level_date)
-
-        #def start_next_level():
-         #   pass   
-
+            self.isActive = False
 
  
     def horizontal_collisions(self):
@@ -128,7 +147,7 @@ class LevelBase():
         #collisions
 
         self.block_collide(self.blocks)
-        self.end_collide(self.end_level)
+        self.load_new_level()
         self.horizontal_collisions()
         self.vertical_collisions()
 
@@ -137,3 +156,5 @@ class LevelBase():
         self.player.update()
         self.hor_enemy.update(self.enemy_group)
         self.scroll()
+
+        self.end_collide(self.end_level) #musi wykonywać się ostatnia w update -> ekran startowy informujący o następnym levelu
