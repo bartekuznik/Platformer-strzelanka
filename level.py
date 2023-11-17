@@ -143,6 +143,7 @@ class LevelBase():
         self.player_group.draw(self.screen)
         self.end_group.draw(self.screen)
         self.enemy_group.draw(self.screen)
+        self.player.bullet_group.draw(self.screen)
 
         #collisions
 

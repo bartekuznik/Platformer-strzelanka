@@ -1,4 +1,5 @@
 import pygame
+from bullet import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, position):
@@ -13,6 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.onGround = True
         self.y_momentum = 0
         self.player_move = [0, 0]
+        self.bullet_group = pygame.sprite.Group()
 
     def add_gravity(self):
         """ if self.y_momentum < 1:
@@ -28,6 +30,12 @@ class Player(pygame.sprite.Sprite):
 
     def jump(self):
         self.y_momentum = self.jump_value
+
+    def fire(self):
+        if self.moving_left:
+            return Bullet(self.rect.center, -1)
+        else:
+            return Bullet(self.rect.center, 1)
 
     def player_input(self):
         keys = pygame.key.get_pressed()
@@ -45,6 +53,9 @@ class Player(pygame.sprite.Sprite):
             self.jump()
             self.onGround = False
             #print(self.player_move[1])
+
+        if keys[pygame.K_UP]:
+            self.bullet_group.add(self.fire())
 
 
     def moving(self):
@@ -64,10 +75,14 @@ class Player(pygame.sprite.Sprite):
         else:
             self.y_momentum += 0.2
         self.player_move[1] += self.y_momentum"""
+    
+    
 
     def update(self):
         self.player_input()
         self.moving()
+        self.bullet_group.update()
+        #self.bullet_group.draw()
         #self.add_gravity()
         #self.test_fuction()
         #print(self.rect.y,self.rect.x)
